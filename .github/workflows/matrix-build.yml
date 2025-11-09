@@ -1,0 +1,45 @@
+name: Multi-Platform Matrix Build with Artifacts
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Matrix with 3 Python versions (could also be Node, OS, etc.)
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Unique step with required identifier
+      - name: matrix-ba7c401
+        run: echo "Building for Python version ${{ matrix.python-version }}"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies (optional)
+        run: |
+          python --version
+          pip install --upgrade pip
+          echo "Dependencies setup done for Python ${{ matrix.python-version }}"
+
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Python version ${{ matrix.python-version }}" > build_output_${{ matrix.python-version }}.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ba7c401-py${{ matrix.python-version }}
+          path: build_output_${{ matrix.python-version }}.txt
+
